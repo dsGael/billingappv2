@@ -2,59 +2,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+    <!-- Especifica la versión del modelo POM -->
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.billingapp</groupId>
-    <artifactId>billingapp-back</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
-    
-    <name>Billing App Backend</name>
-    
-    <properties>
-        <java.version>17</java.version>
-        <spring-boot.version>3.2.2</spring-boot.version>
-    </properties>
-    
-    <dependencies>
-        <!-- Spring Boot Starter Web -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
 
-        <!-- Spring Boot Starter Data JPA -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-
-        <!-- PostgreSQL Driver -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.6.0</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Spring Boot Starter Test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring-boot.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <!-- Información básica del proyecto -->
+    <groupId>com.example</groupId> <!-- Cambia esto según el grupo de tu proyecto -->
+    <artifactId>billingApp-v2</artifactId> <!-- Cambia esto según el nombre del proyecto -->
+    <version>1.0-SNAPSHOT</version> <!-- Cambia esto según la versión de tu proyecto -->
+    <packaging>jar</packaging> <!-- Cambia esto si no es un JAR -->
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
+            <!-- Docker Maven Plugin -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.38.1</version> <!-- Verifica si hay una versión más reciente -->
+                <configuration>
+                    <images>
+                        <image>
+                            <name>my-jenkins-container</name>
+                            <build>
+                                <dockerFile>Dockerfile</dockerFile> <!-- Apunta a tu Dockerfile -->
+                            </build>
+                            <run>
+                                <ports>
+                                    <port>8080:8080</port> <!-- Puerto para Jenkins -->
+                                    <port>50000:50000</port> <!-- Puerto para agentes Jenkins -->
+                                </ports>
+                                <volumes>
+                                    <volume>/var/run/docker.sock:/var/run/docker.sock</volume> <!-- Permite acceso a Docker -->
+                                    <volume>jenkins_home:/var/jenkins_home</volume> <!-- Volumen de datos de Jenkins -->
+                                </volumes>
+                                <env>
+                                    <JAVA_OPTS>-Djenkins.install.runSetupWizard=false</JAVA_OPTS> <!-- Configuración de Jenkins -->
+                                </env>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
             </plugin>
         </plugins>
     </build>
